@@ -6,28 +6,66 @@ import java.util.Stack;
 
 //3+5*(2+3) ->3523+*+
 public class Calculator {
-//    private String transfer(String rawFormula){
-//        char[] chars = rawFormula.toCharArray();
-//        Stack<String>  strStack = new Stack<>();
-//        StringBuilder postFormula = new StringBuilder();
-//        for (int i = 0;i<chars.length;i++){
-//            if (isNumber(String.valueOf(chars[i]))){
-//                postFormula.append(chars[i]);
-//            }else{
-//                if (){
-//
-//                }else if (isGreter(chars[i],strStack.peek())){
-//                    strStack.push(String.valueOf(chars[i]));
-//                }else{
-//
-//                }
-//
-//            }
-//
-//        }
-//        //numStack  3523
-//        //strStack  +*(+)
-//    }
+
+    public static String transfer(String orgin){
+        Stack<String> opStack = new Stack<>();
+        StringBuilder postStr = new StringBuilder();
+        for (int i =0;i < orgin.length();i++){
+            String tempStr = String.valueOf(orgin.charAt(i));
+            if (isNumber(tempStr)){
+                postStr.append(tempStr);
+            }else {
+                switch (tempStr){
+                    case "+":case "-":case "*":case "/":
+                        if (opStack.isEmpty()){
+                            opStack.push(tempStr);
+                        }else {
+                            //3+5*2 ->352*+   3*5+2->35*2+
+                            while (!opStack.isEmpty()){
+                                if (!compare(tempStr,opStack.peek())){
+                                    postStr.append(opStack.pop());
+                                }else{
+                                    opStack.push(tempStr);
+                                    break;
+                                }
+
+                        }
+
+
+                    }
+                    break;
+                    case "(":
+                        opStack.push("(");
+                        break;
+                    case ")":
+                        while (!opStack.peek().equals("(") ){
+                            postStr.append(opStack.pop());
+                        }
+                        if (opStack.peek().equals("(")){
+                            opStack.pop();
+                        }
+                        break;
+                    default:break;
+                }
+            }
+        }
+        while (!opStack.isEmpty()){
+            postStr.append(opStack.pop());
+        }
+        return postStr.toString();
+    }
+    public  static boolean compare(String orgin,String post){
+       return getPropetiy(orgin)>getPropetiy(post);
+    }
+    public static int   getPropetiy(String orgin){
+        if (orgin.equals("+")||orgin.equals("-")){
+            return 0;
+        }else  if (orgin.equals("*")||orgin.equals("/")){
+            return 1;
+        }else {
+            return -1;
+        }
+    }
 
     private Long calculate(String postFormula){
         Stack<String> tempStack = new Stack<>();
@@ -135,30 +173,34 @@ public class Calculator {
     }
 
     public static void main(String[] args) {
-        List<String> s = new ArrayList<>();
-        s.add("3");
-        s.add("+");
-        s.add("4");
-        s.add("*");
-        s.add("7");
-        s.add("+");
-        s.add("3");
-        s.add("*");
-        s.add("(");
-        s.add("5");
-        s.add("+");
-        s.add("3");
-        s.add(")");
-        System.out.println(s);
-        Calculator calculator = new Calculator();
-        List<String> strings = parseToSuffixExpression(s);
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i =0;i<strings.size();i++){
+       // 3+5*(2+3) ->3523+*+
+        String a = "3+5*(2+3)";
+        System.out.println(transfer(a));
+
+//        List<String> s = new ArrayList<>();
+//        s.add("3");
+//        s.add("+");
+//        s.add("4");
+//        s.add("*");
+//        s.add("7");
+//        s.add("+");
+//        s.add("3");
+//        s.add("*");
+//        s.add("(");
+//        s.add("5");
+//        s.add("+");
+//        s.add("3");
+//        s.add(")");
+//        System.out.println(s);
+//        Calculator calculator = new Calculator();
+//        List<String> strings = parseToSuffixExpression(s);
+//        StringBuilder stringBuilder = new StringBuilder();
+       /* for (int i =0;i<strings.size();i++){
             stringBuilder.append(strings.get(i));
         }
         System.out.println(stringBuilder);
         Long result = calculator.calculate(stringBuilder.toString());
 
-        System.out.println(result);
+        System.out.println(result);*/
     }
 }
